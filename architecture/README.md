@@ -1,143 +1,134 @@
-# Architecture Overview
+# Team Nexus 架构说明
 
-This folder contains the core technical architecture and workflow diagrams for Team Nexus.
+本目录用于保存 Team Nexus 的核心架构图、数据库关系图和任务协作流程图，帮助读者理解系统的模块划分、数据关系和主要业务流转方式。
 
-Team Nexus is a collaborative workspace and task management web application that supports Kanban task boards, real-time communication, notifications, file sharing, and team collaboration.
-
----
-
-# 1. System Architecture
-
-![System Architecture](./system-architecture-diagram.png)
-
-This diagram illustrates the overall technical architecture of Team Nexus.
-
-The backend is built with Node.js and Express, using:
-
-- JWT authentication middleware
-- Express route modules
-- Socket.IO server
-- MongoDB with Mongoose
-- multer file upload handling
-- notification utilities
-
-Main backend route modules include:
-
-- auth
-- protected
-- users
-- workplaces
-- boards
-- tasks
-- rooms
-- messages
-- chat-status
-- files
-- links
-- notifications
-
-The frontend is built with React and Vite.
-
-Frontend components include:
-
-- React Router pages
-- Axios REST client
-- Socket.IO client
-- Notification providers
-- Chat notification providers
-
-The system supports:
-
-- REST API communication
-- real-time Socket.IO events
-- JWT-based authentication
-- file uploads
-- notification broadcasting
-- Kanban task management
+Team Nexus 是一个实时团队协作平台，支持工作区管理、Kanban 任务看板、团队聊天、通知提醒、共享文件和多人实时同步。
 
 ---
 
-# 2. Core Database ER Diagram
+## 1. 系统架构图
 
-![Database ER Diagram](./database-er-diagram.png)
+![系统架构图](./system-architecture-diagram.png)
 
-This ER diagram represents the core MongoDB database structure used in Team Nexus.
+该图展示 Team Nexus 的整体技术架构，主要分为前端、后端、数据库和实时通信四个部分。
 
-Key collections include:
+### 前端部分
 
-- USER_ENTRY
-- WORKPLACE
-- BOARD
-- TASK
-- ROOM
-- MESSAGE
-- CHAT_STATUS
-- NOTIFICATION
-- LINK
-- FILE
+前端基于 React 和 Vite 构建，主要职责包括：
 
-Main relationships include:
+- 页面路由与界面渲染
+- 工作区、看板、任务、聊天和通知等页面展示
+- 通过 Axios 调用后端 REST API
+- 通过 Socket.IO Client 接收实时事件
+- 管理通知状态和聊天提醒状态
 
-- WORKPLACE creates BOARD
-- BOARD maps columns and TASK cards
-- ROOM contains MESSAGE
-- CHAT_STATUS tracks unread messages
-- USER_ENTRY uploads FILE and LINK
-- USER_ENTRY receives NOTIFICATION
-- WORKPLACE stores FILE and LINK
+### 后端部分
 
-The TASK collection stores:
+后端基于 Node.js 和 Express.js 构建，主要职责包括：
 
-- task details
-- assignees
-- labels
-- checklist data
-- completion state
-- hidden users
-- read status
+- 用户登录与 JWT 认证
+- REST API 路由处理
+- Socket.IO 实时事件分发
+- MongoDB 数据读写
+- 文件上传处理
+- 通知生成与广播
 
-The ROOM, MESSAGE, and CHAT_STATUS collections support the real-time chat system.
+主要后端路由模块包括：
 
-Only major collections and relationships related to the main application workflow are included for readability.
+- `auth`：用户认证
+- `protected`：受保护接口校验
+- `users`：用户信息
+- `workplaces`：工作区管理
+- `boards`：看板管理
+- `tasks`：任务管理
+- `rooms`：聊天室管理
+- `messages`：聊天消息
+- `chat-status`：聊天未读状态
+- `files`：文件上传与共享
+- `links`：链接资源管理
+- `notifications`：通知管理
+
+### 实时通信
+
+系统通过 Socket.IO 实现多人协作中的实时更新，例如：
+
+- 新消息提醒
+- 任务分配提醒
+- 任务完成状态更新
+- 工作区删除同步
+- 通知广播
 
 ---
 
-# 3. Task Workflow Diagram
+## 2. 数据库 ER 图
 
-![Task Workflow](./task-workflow-diagram.png)
+![数据库 ER 图](./database-er-diagram.png)
 
-This diagram illustrates the main workspace and task management workflow inside Team Nexus.
+该图展示 Team Nexus 在 MongoDB 中使用的核心集合及其关系。
 
-The workflow includes:
+### 核心集合
 
-- user login
-- JWT storage in localStorage
-- workspace creation
-- automatic board creation
-- board column management
-- Kanban task creation
-- task assignment
-- task completion updates
-- MyTasks management
-- Socket.IO real-time synchronization
+- `USER_ENTRY`：用户信息
+- `WORKPLACE`：工作区信息
+- `BOARD`：看板与列结构
+- `TASK`：任务详情
+- `ROOM`：聊天室
+- `MESSAGE`：聊天消息
+- `CHAT_STATUS`：聊天未读状态
+- `NOTIFICATION`：通知记录
+- `LINK`：共享链接
+- `FILE`：共享文件
 
-Main API flows include:
+### 主要关系
 
-- `POST /api/login`
-- `GET /api/workplaces/:email`
-- `POST /api/workplaces`
-- `GET /api/boards/:workplaceId`
-- `PUT /api/boards/:workplaceId`
-- `POST /api/tasks`
-- `GET /api/tasks/:id`
-- `PUT /api/tasks/:id`
-- `GET /api/tasks/my`
+- 一个工作区可以创建或关联一个看板。
+- 一个看板包含多个列和多个任务卡片。
+- 一个任务可以包含负责人、标签、清单、完成状态、隐藏用户和阅读状态。
+- 一个聊天室可以包含多条消息。
+- 聊天状态用于记录用户的未读消息信息。
+- 用户可以上传文件和链接到工作区。
+- 用户可以接收任务、聊天和工作区相关通知。
 
-Socket.IO events include:
+该 ER 图只保留项目核心业务集合，便于展示主要数据结构，未展开所有辅助字段。
 
-- `task_assigned`
-- `task_completion_updated`
-- `workspace_deleted`
-- `send_message`
+---
 
-The workflow supports collaborative task management with live updates across multiple connected users.
+## 3. 任务工作流图
+
+![任务工作流图](./task-workflow-diagram.png)
+
+该图展示用户从登录到进入工作区、创建看板任务、分配任务并同步状态的完整流程。
+
+### 主要流程
+
+1. 用户登录系统。
+2. 后端校验身份并返回 JWT。
+3. 前端将 JWT 保存到 `localStorage`。
+4. 用户进入工作区列表。
+5. 用户创建或选择工作区。
+6. 系统为工作区加载或创建看板。
+7. 用户在看板中创建任务卡片。
+8. 用户编辑任务详情、分配负责人、设置时间和描述。
+9. 任务状态变化后，系统通过 API 保存数据。
+10. Socket.IO 将任务变化同步给相关用户。
+
+### 主要 API
+
+- `POST /api/login`：用户登录
+- `GET /api/workplaces/:email`：获取用户工作区
+- `POST /api/workplaces`：创建工作区
+- `GET /api/boards/:workplaceId`：获取工作区看板
+- `PUT /api/boards/:workplaceId`：更新看板结构
+- `POST /api/tasks`：创建任务
+- `GET /api/tasks/:id`：获取任务详情
+- `PUT /api/tasks/:id`：更新任务详情
+- `GET /api/tasks/my`：获取个人任务
+
+### 主要 Socket.IO 事件
+
+- `task_assigned`：任务被分配
+- `task_completion_updated`：任务完成状态更新
+- `workspace_deleted`：工作区被删除
+- `send_message`：发送聊天消息
+
+---
