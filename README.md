@@ -42,7 +42,6 @@ The project was developed as a collaborative software engineering project focuse
 ```text
 Team-Nexus-Realtime-Collaboration/
 ├── architecture/
-├── code-samples/
 ├── screenshots/
 └── README.md
 ```
@@ -54,10 +53,6 @@ Team-Nexus-Realtime-Collaboration/
 ## architecture
 
 Contains system architecture diagrams, workflow diagrams, and technical design documentation.
-
-## code-samples
-
-Contains frontend and backend source code samples for the Team Nexus platform.
 
 ## screenshots
 
@@ -79,6 +74,10 @@ Contains UI screenshots and feature previews of the application.
 
 # Notes
 
+## Notice
+
 This repository is intended for project showcase and educational purposes.
 
 Sensitive environment files and generated dependency folders are excluded from the repository.
+
+All rights reserved. The contents of this repository, including documentation, screenshots, design assets, and implementation details, may not be copied, modified, redistributed, or used for commercial purposes without prior written permission from the author.
